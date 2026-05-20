@@ -1,6 +1,6 @@
 # Lab Website
 
-Static GitHub Pages site for a university lab.
+Static GitHub Pages site for a MHL lab.
 
 ## Edit the content
 
