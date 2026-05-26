@@ -187,28 +187,73 @@ async function renderPublications() {
     if (!bibResponse.ok) throw new Error("Could not load data/publications.bib");
     const publications = parseBibtex(await bibResponse.text());
 
-    target.innerHTML = publications.map((publication) => {
-      const details = extra[publication.key] || {};
-      const authors = formatAuthors(publication.fields.author);
-      const venue = publication.fields.journal || publication.fields.booktitle || publication.fields.publisher || "";
-      const year = publication.fields.year || "";
-      const abstract = details.abstract || publication.fields.abstract || "";
-      return `
-        <article class="publication">
-          <h2>${escapeHtml(publication.fields.title || publication.key)}</h2>
-          <p class="publication-details">${escapeHtml(authors)}${venue ? `, ${escapeHtml(venue)}` : ""}${year ? `, ${escapeHtml(year)}` : ""}</p>
-          ${abstract ? `<p>${escapeHtml(abstract)}</p>` : ""}
-          <div class="link-row">
-            ${details.pdf ? `<a href="${escapeHtml(details.pdf)}">Download PDF</a>` : ""}
-            ${details.publisher ? `<a href="${escapeHtml(details.publisher)}">Publisher</a>` : ""}
-            ${publication.fields.doi ? `<a href="https://doi.org/${escapeHtml(publication.fields.doi)}">DOI</a>` : ""}
-          </div>
-        </article>
-      `;
-    }).join("");
+    target.innerHTML = renderPublicationCategory("Journal Papers", publications, extra, isJournalPublication)
+      + renderPublicationCategory("Conference Papers", publications, extra, isConferencePublication);
   } catch (error) {
     target.innerHTML = `<p class="notice">${escapeHtml(error.message)}</p>`;
   }
+}
+
+function renderPublicationCategory(title, publications, extra, predicate) {
+  const categoryPublications = publications.filter(predicate);
+  const yearGroups = groupPublicationsByYear(categoryPublications);
+
+  return `
+    <section class="content-group publication-group">
+      <div class="content-group-heading">
+        <h2>${escapeHtml(title)}</h2>
+        <span>${escapeHtml(categoryPublications.length)} ${categoryPublications.length === 1 ? "paper" : "papers"}</span>
+      </div>
+      ${yearGroups.length ? yearGroups.map(([year, yearPublications]) => `
+        <section class="publication-year-group">
+          <h3>${escapeHtml(year)}</h3>
+          <div class="stack">
+            ${yearPublications.map((publication) => renderPublicationCard(publication, extra[publication.key] || {})).join("")}
+          </div>
+        </section>
+      `).join("") : `<p class="notice">No papers listed yet.</p>`}
+    </section>
+  `;
+}
+
+function renderPublicationCard(publication, details) {
+  const authors = formatAuthors(publication.fields.author);
+  const venue = publication.fields.journal || publication.fields.booktitle || publication.fields.publisher || "";
+  const year = publication.fields.year || "";
+  const abstract = details.abstract || publication.fields.abstract || "";
+
+  return `
+    <article class="publication">
+      <h2>${escapeHtml(publication.fields.title || publication.key)}</h2>
+      ${authors ? `<p class="publication-authors">${escapeHtml(authors)}</p>` : ""}
+      ${venue || year ? `<p class="publication-details"><em>${escapeHtml([venue, year].filter(Boolean).join(", "))}</em></p>` : ""}
+      ${abstract ? `<p>${escapeHtml(abstract)}</p>` : ""}
+      <div class="link-row">
+        ${details.pdf ? `<a href="${escapeHtml(details.pdf)}">Download PDF</a>` : ""}
+        ${details.publisher ? `<a href="${escapeHtml(details.publisher)}">Publisher</a>` : ""}
+        ${publication.fields.doi ? `<a href="https://doi.org/${escapeHtml(publication.fields.doi)}">DOI</a>` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function groupPublicationsByYear(publications) {
+  const grouped = publications.reduce((groups, publication) => {
+    const year = publication.fields.year || "Without year";
+    if (!groups[year]) groups[year] = [];
+    groups[year].push(publication);
+    return groups;
+  }, {});
+
+  return Object.entries(grouped).sort(([yearA], [yearB]) => Number(yearB) - Number(yearA));
+}
+
+function isJournalPublication(publication) {
+  return publication.type === "article" || Boolean(publication.fields.journal);
+}
+
+function isConferencePublication(publication) {
+  return ["inproceedings", "conference", "proceedings"].includes(publication.type) || Boolean(publication.fields.booktitle);
 }
 
 function parseBibtex(source) {
@@ -221,7 +266,7 @@ function parseBibtex(source) {
     const brace = source.indexOf("{", at);
     if (brace === -1) break;
 
-    const type = source.slice(at + 1, brace).trim().toLowerCase();
+    const type = source.slice(at + 1, brace).trim().toLowerCase().replace(/^@+/, "");
     let depth = 1;
     let cursor = brace + 1;
     while (cursor < source.length && depth > 0) {

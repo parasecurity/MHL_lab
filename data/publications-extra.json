@@ -1,8 +1,8 @@
 {
-  "lastname2026example": {
+  "tampouratzis2020novel": {
     "pdf": "papers/lastname2026example.pdf",
-    "publisher": "https://doi.org/10.0000/example-doi",
-    "abstract": "Replace this text with the publication abstract. The bibliographic information displayed on the site is extracted from the matching BibTeX entry."
+    "publisher": "https://dl.acm.org/doi/pdf/10.1145/3378934",
+    "abstract": "In an era of complex networked parallel heterogeneous systems, simulating independently only parts, components, or attributes of a system-under-design is a cumbersome, inaccurate, and inefficient approach. Moreover, by considering each part of a system in an isolated manner, and due to the numerous and highly complicated interactions between the different components, the system optimization capabilities are severely limited. The presented fully-distributed simulation framework (called as COSSIM) is the first known open-source, high-performance simulator that can handle holistically system-of-systems including processors, peripherals and networks; such an approach is very appealing to both Cyber Physical Systems (CPS) and Highly Parallel Heterogeneous Systems designers and application developers. Our highly integrated approach is further augmented with accurate power estimation and security sub-tools that can tap on all system components and perform security and robustness analysis of the overall system under design—something that was unfeasible up to now. Additionally, a sophisticated Eclipse-based Graphical User Interface (GUI) has been developed to provide easy simulation setup, execution, and visualization of results. COSSIM has been evaluated when executing the widely used Netperf benchmark suite as well as a number of real-world applications. Final results demonstrate that the presented approach has up to 99% accuracy (when compared with the performance of the real system), while the overall simulation time can be accelerated almost linearly with the number of CPUs utilized by the simulator"
   },
   "lastname2025conference": {
     "pdf": "papers/lastname2025conference.pdf",

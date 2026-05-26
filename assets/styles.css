@@ -366,7 +366,21 @@ h3 {
 }
 
 .publication-details {
-  margin: 0.5rem 0;
+  margin: 0.35rem 0 0.9rem;
+}
+
+.publication-authors {
+  margin: 0.75rem 0 0;
+}
+
+.publication-year-group {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.publication-year-group h3 {
+  color: var(--accent-dark);
+  font-size: 1.1rem;
 }
 
 .link-row {
