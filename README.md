@@ -1,8 +1,8 @@
 # Lab Website
 
-Static GitHub Pages site for a MHL lab.
+Static GitHub Pages site for the hardware group of the MHL lab.
 
-## Edit the content
+## For lab members: Edit the content instructions
 
 - `data/members.json`: lab members, contact details, CV summaries, research interests
 - `data/available-theses.json`: available diploma thesis projects
@@ -20,7 +20,7 @@ Static GitHub Pages site for a MHL lab.
 - `publications.html`: publications parsed from BibTeX
 - `equipment.html`: available equipment
 
-## Preview locally
+## For lab members maintaining the website: Preview locally before uploading changes to this repository
 
 Run a small static server from this directory:
 
